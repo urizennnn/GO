@@ -20,11 +20,12 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
-
 	v1router := chi.NewRouter()
 
-	v1router.Get("/ready", handlerReadines)
 	router.Mount("/v1", v1router)
+
+	v1router.Get("/ready", handlerReadines)
+	v1router.Get("/err", handlererr)
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file:", err)
