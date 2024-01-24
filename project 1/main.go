@@ -67,6 +67,7 @@ func main() {
 	v1router.Post("/users", apiCfg.handleUser)
 	v1router.Get("/ready", handlerReadines)
 	v1router.Get("/err", handlererr)
+	v1router.Get("/users",apiCfg.getUserbyApi)
 
 	log.Fatal(server.ListenAndServe())
 }

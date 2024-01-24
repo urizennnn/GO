@@ -1,3 +1,4 @@
 .env
 *.exe
 GO-PROJECTS
+.vscode
