@@ -10,9 +10,10 @@ import (
 	"github.com/urizennnn/GO-PROJECTS/internal/database"
 )
 
-func (Config *apiConfig) handleUser(w http.ResponseWriter, r *http.Request) {
+func (Config *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameter struct {
 		Name string `json:"name"`
+		URL  string `json:"url"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -22,22 +23,18 @@ func (Config *apiConfig) handleUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, 400, "Error Parsing JSON")
 		return
 	}
-	user, err := Config.DB.CreateUser(r.Context(), database.CreateUserParams{
+	feed, err := Config.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Name:      params.Name,
+		Url:       params.URL,
+		UserID:    user.ID,
 	})
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprint("Error Creating User", err))
 		return
 	}
 
-	respondWithJSON(w, 201, databaseUserToUser(user))
-}
-
-func (Config *apiConfig) getUserbyApi(w http.ResponseWriter, r *http.Request, user database.User) {
-
-	respondWithJSON(w, 200, databaseUserToUser(user))
-
+	respondWithJSON(w, 201, databasetoFeed(feed))
 }
