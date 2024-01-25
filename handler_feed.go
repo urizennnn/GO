@@ -38,3 +38,13 @@ func (Config *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 
 	respondWithJSON(w, 201, databasetoFeed(feed))
 }
+
+func (Config *apiConfig) getFeed(w http.ResponseWriter, r *http.Request) {
+	feeds, err := Config.DB.GetFeed(r.Context())
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprint("Error Fetching Feed", err))
+		return
+	}
+	respondWithJSON(w, 200, singleFeed(feeds))
+
+}

@@ -69,6 +69,8 @@ func main() {
 	v1router.Get("/err", handlererr)
 	v1router.Get("/users", apiCfg.middlwareAuth(apiCfg.getUserbyApi))
 	v1router.Post("/feed", apiCfg.middlwareAuth(apiCfg.handlerCreateFeed))
+	v1router.Get("/feed", apiCfg.getFeed)
+	v1router.Post("/follows_feed",apiCfg.middlwareAuth(apiCfg.handlerCreateFeedfollows))
 
-	log.Fatal(server.ListenAndServe())
+	server.ListenAndServe()
 }
