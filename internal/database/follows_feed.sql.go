@@ -45,3 +45,52 @@ func (q *Queries) CreateFeedFollows(ctx context.Context, arg CreateFeedFollowsPa
 	)
 	return i, err
 }
+
+const getUserFeed = `-- name: GetUserFeed :many
+
+SELECT id, created_at, updated_at, user_id, feed_id FROM follows_feed where user_id=$1
+`
+
+func (q *Queries) GetUserFeed(ctx context.Context, userID uuid.UUID) ([]FollowsFeed, error) {
+	rows, err := q.db.QueryContext(ctx, getUserFeed, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FollowsFeed
+	for rows.Next() {
+		var i FollowsFeed
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.FeedID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const unfollowFeed = `-- name: UnfollowFeed :exec
+
+DELETE FROM follows_feed where id =$1 and user_id=$2
+`
+
+type UnfollowFeedParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) UnfollowFeed(ctx context.Context, arg UnfollowFeedParams) error {
+	_, err := q.db.ExecContext(ctx, unfollowFeed, arg.ID, arg.UserID)
+	return err
+}

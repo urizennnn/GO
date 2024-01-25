@@ -70,3 +70,12 @@ func databaseFollowsFeed (followFeed database.FollowsFeed) FollowsFeed{
 		UserId: followFeed.UserID,
 	}
 }
+
+func UserFeed(feedFollow []database.FollowsFeed) []FollowsFeed {
+	userFeed := []FollowsFeed{}
+	for _, feedFollows := range feedFollow {
+		userFeed = append(userFeed, databaseFollowsFeed(feedFollows))
+	}
+
+	return userFeed
+}
